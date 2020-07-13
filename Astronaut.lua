@@ -15,7 +15,11 @@ function Astronaut:init()
 end
 
 function Astronaut:update( dt )
-    self.y = self.y + gravity * dt 
+    if gravity < 0 then
+        self.y = math.max(self.height, self.y + gravity * dt) 
+    else
+        self.y = math.min(VIRTUAL_HEIGHT - self.height, self.y + gravity * dt)
+    end
 
     if love.keyboard.wasPressed('space') then 
         gravity = -gravity

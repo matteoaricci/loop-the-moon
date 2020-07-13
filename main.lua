@@ -1,6 +1,7 @@
 push = require 'push'
 Class = require 'class'
 require 'Astronaut'
+require 'Util'
 
 -- Class = require 'class'
 
@@ -21,10 +22,29 @@ local BACK_MOVE_SPEED = 30
 local BACK_MOVE_SPEED2 = 15
 
 local astro = Astronaut()
+GROUND = 1
+SKY = 2
 
 
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
+
+    tiles = {}
+    tilesheet = love.graphics.newImage('/images/tilesheet-astro.png')
+    quads = GenerateQuads(tilesheet, 32, 32)
+
+    mapWidth = 20
+    mapHeight = 20
+
+    for y = 1, mapHeight do 
+        table.insert(tiles, {})
+
+        for x = 1, mapWidth do 
+            table.insert(tiles[y], {
+               id = y < 3 and SKY or y > 17 and GROUND or null
+            })
+        end
+    end
 
     math.randomseed(os.time())
 
@@ -91,6 +111,13 @@ function love.draw()
     love.graphics.draw(midground2, -midScroll2 + 399, 0)
     love.graphics.draw(midground2, -midScroll2 + 456, 0)
     love.graphics.draw(midground2, -midScroll2 + 513, 0)
+
+    for y = 1, mapHeight do 
+        for x = 1, mapWidth do 
+            local tile = tiles[y][x]
+            love.graphics.draw(tilesheet, quads[tile.id], (x - 1) * 16, (y - 1) * 16)
+        end
+    end
     
     astro:render()
 
