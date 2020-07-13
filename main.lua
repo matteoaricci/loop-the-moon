@@ -22,8 +22,9 @@ local BACK_MOVE_SPEED = 30
 local BACK_MOVE_SPEED2 = 15
 
 local astro = Astronaut()
-GROUND = 1
-SKY = 2
+GROUND = 2
+SKY = 23
+WHAT = 39
 
 
 function love.load()
@@ -31,9 +32,9 @@ function love.load()
 
     tiles = {}
     tilesheet = love.graphics.newImage('/images/tilesheet-astro.png')
-    quads = GenerateQuads(tilesheet, 32, 32)
+    quads = GenerateQuads(tilesheet, 16, 32)
 
-    mapWidth = 20
+    mapWidth = 32
     mapHeight = 20
 
     for y = 1, mapHeight do 
@@ -41,7 +42,7 @@ function love.load()
 
         for x = 1, mapWidth do 
             table.insert(tiles[y], {
-               id = y < 3 and SKY or y > 17 and GROUND or null
+               id = y < 3 and SKY or y > 16 and GROUND or WHAT
             })
         end
     end
