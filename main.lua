@@ -11,6 +11,8 @@ WINDOW_HEIGHT = 720
 VIRTUAL_WIDTH = 512
 VIRTUAL_HEIGHT = 288
 
+CAMERA_SCROLL_SPEED = 60
+
 local background = love.graphics.newImage('images/space-bkgd.png')
 local midground = love.graphics.newImage('images/looping-background.png')
 local midground2 = love.graphics.newImage('images/looping-background2.png')
@@ -26,30 +28,33 @@ GROUND = 2
 SKY = 23
 WHAT = 39
 
-
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
     tiles = {}
     tilesheet = love.graphics.newImage('/images/tilesheet-astro.png')
-    quads = GenerateQuads(tilesheet, 16, 32)
+    quads = GenerateQuads(tilesheet, 16, 16)
 
     mapWidth = 32
     mapHeight = 20
+
+    cameraScroll = 0
 
     for y = 1, mapHeight do 
         table.insert(tiles, {})
 
         for x = 1, mapWidth do 
             table.insert(tiles[y], {
-               id = y < 3 and SKY or y > 16 and GROUND or WHAT
+               id = y == 2 and SKY or 
+               y == 1 and 7 or 
+               y == 17 and GROUND or
+               y == 18 and 18 or 
+               WHAT
             })
         end
     end
 
     math.randomseed(os.time())
-
-    love.window.setTitle('Loop the Moon')
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT, {
         vsync = true,
@@ -89,6 +94,8 @@ function love.update(dt)
 
     astro:update(dt)
 
+    cameraScroll = cameraScroll + CAMERA_SCROLL_SPEED * dt
+
     love.keyboard.keysPressed = {}
 end
 
@@ -113,6 +120,8 @@ function love.draw()
     love.graphics.draw(midground2, -midScroll2 + 456, 0)
     love.graphics.draw(midground2, -midScroll2 + 513, 0)
 
+    love.graphics.translate(-math.floor(cameraScroll), 0)
+    
     for y = 1, mapHeight do 
         for x = 1, mapWidth do 
             local tile = tiles[y][x]

@@ -1,5 +1,9 @@
 Astronaut = Class{}
 
+function love.conf(t)
+    t.console = true
+end
+
 local gravity = 150
 
 function Astronaut:init()
@@ -25,8 +29,10 @@ function Astronaut:update( dt )
         gravity = -gravity
         self.flip = -self.flip
     end
+
+    self.x = (self.x + CAMERA_SCROLL_SPEED * dt)
 end
 
 function Astronaut:render()
-    love.graphics.draw(self.image, self.x, self.y, self.rotation, 1, self.flip, 0, self.height/2)
+    love.graphics.draw(self.image, math.floor(cameraScroll) + 40, self.y, self.rotation, 1, self.flip, 0, self.height/2)
 end
