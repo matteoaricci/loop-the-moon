@@ -2,6 +2,7 @@ push = require 'push'
 Class = require 'class'
 require 'Astronaut'
 require 'Util'
+require 'tiledmap'
 
 -- Class = require 'class'
 
@@ -10,8 +11,10 @@ WINDOW_HEIGHT = 720
 
 VIRTUAL_WIDTH = 512
 VIRTUAL_HEIGHT = 288
+FACTOR = 2
 
-CAMERA_SCROLL_SPEED = 60
+CAMERA_SCROLL_SPEED = 60 * FACTOR
+GRAVITY = 200
 
 local background = love.graphics.newImage('images/space-bkgd.png')
 local midground = love.graphics.newImage('images/looping-background.png')
@@ -20,8 +23,8 @@ local midScroll = 0
 local midScroll2 = 0
 
 local LOOP_POINT = 171
-local BACK_MOVE_SPEED = 30
-local BACK_MOVE_SPEED2 = 15
+local BACK_MOVE_SPEED = 30 * 2
+local BACK_MOVE_SPEED2 = 15 * 2
 
 local astro = Astronaut()
 GROUND = 2
@@ -31,28 +34,9 @@ WHAT = 39
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
-    tiles = {}
-    tilesheet = love.graphics.newImage('/images/tilesheet-astro.png')
-    quads = GenerateQuads(tilesheet, 16, 16)
-
-    mapWidth = 32
-    mapHeight = 20
-
     cameraScroll = 0
 
-    for y = 1, mapHeight do 
-        table.insert(tiles, {})
-
-        for x = 1, mapWidth do 
-            table.insert(tiles[y], {
-               id = y == 2 and SKY or 
-               y == 1 and 7 or 
-               y == 17 and GROUND or
-               y == 18 and 18 or 
-               WHAT
-            })
-        end
-    end
+    _G.map = loadTiledMap('astro-map-two')
 
     math.randomseed(os.time())
 
@@ -120,16 +104,13 @@ function love.draw()
     love.graphics.draw(midground2, -midScroll2 + 456, 0)
     love.graphics.draw(midground2, -midScroll2 + 513, 0)
 
+
     love.graphics.translate(-math.floor(cameraScroll), 0)
-    
-    for y = 1, mapHeight do 
-        for x = 1, mapWidth do 
-            local tile = tiles[y][x]
-            love.graphics.draw(tilesheet, quads[tile.id], (x - 1) * 16, (y - 1) * 16)
-        end
-    end
+
+    _G.map:draw()
     
     astro:render()
-
+    love.graphics.print(astro.x, astro.x, 0)
+    love.graphics.print(astro.y, astro.x, 20)
     push:finish()
 end
