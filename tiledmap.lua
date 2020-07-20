@@ -22,8 +22,16 @@ function loadTiledMap(path)
         end
     end
 
-    function map:draw()
+    
+function map:pointToTile(x, y)
+    if x < 0 or x > self.width * TILE_SIZE or y < 0 or y > self.height * TILE_SIZE then 
+        return nil 
+    end
 
+    return self.quads[math.floor(y / TILE_SIZE) + 1][math.floor(x / TILE_SIZE) + 1]
+end
+
+    function map:draw()
         for i, layer in ipairs(self.layers) do 
             for y = 0, layer.height - 1 do 
                 for x = 0, layer.width - 1 do
@@ -45,8 +53,6 @@ function loadTiledMap(path)
                 end
             end
         end
-
     end
-
     return map
 end

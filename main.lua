@@ -16,6 +16,8 @@ FACTOR = 2
 CAMERA_SCROLL_SPEED = 60 * FACTOR
 GRAVITY = 200
 
+TILE_SIZE = 16
+
 local background = love.graphics.newImage('images/space-bkgd.png')
 local midground = love.graphics.newImage('images/looping-background.png')
 local midground2 = love.graphics.newImage('images/looping-background2.png')
@@ -77,6 +79,8 @@ function love.update(dt)
     % (LOOP_POINT / 3)
 
     astro:update(dt)
+
+    _G.map:pointToTile(astro.x, astro.y)
 
     cameraScroll = cameraScroll + CAMERA_SCROLL_SPEED * dt
 
